@@ -1,0 +1,17 @@
+{
+  "name": "pivi",
+  "owner": {
+    "name": "Pierre Viviere",
+    "url": "https://github.com/Pivii"
+  },
+  "description": "Pierre Viviere's agent skills, as an installable Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "pivi-skills",
+      "source": "./",
+      "description": "Agent skills for shipping real software — worktree-isolated agent runs, and more to come.",
+      "category": "engineering",
+      "keywords": ["engineering", "skills", "worktree", "agents"]
+    }
+  ]
+}
