@@ -1,6 +1,6 @@
 {
   "name": "pivi-skills",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent skills for shipping real software — worktree-isolated agent runs, and more to come.",
   "author": {
     "name": "Pierre Viviere",
@@ -9,5 +9,5 @@
   "repository": "https://github.com/Pivii/skills",
   "license": "MIT",
   "keywords": ["engineering", "skills", "worktree", "agents"],
-  "skills": []
+  "skills": ["./skills/engineering/ship-issue"]
 }

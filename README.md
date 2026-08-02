@@ -31,7 +31,9 @@ Skills split on one axis — **who can invoke them**. **User-invoked** skills ar
 
 Skills for daily code work.
 
-*Nothing shipped yet.*
+**User-invoked**
+
+- **[ship-issue](./skills/engineering/ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report. Everything about the target repo — base branch, branch naming, build, test and lint commands, PR target — is discovered, not assumed.
 
 ### Productivity
 

@@ -4,7 +4,7 @@ Skills for daily code work. A **promoted** bucket — everything here ships in t
 
 **User-invoked**
 
-*Nothing yet.*
+- **[ship-issue](./ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report.
 
 **Model-invoked**
 
