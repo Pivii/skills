@@ -22,7 +22,7 @@ gh repo view --json nameWithOwner,defaultBranchRef
 git branch -r
 ```
 
-Then read the repo's own instructions — `CLAUDE.md`, `AGENTS.md`, and `CONTEXT.md` plus `docs/adr/` where they exist — for the branch work starts from, the branch-name convention, the build command, the test command, the lint command, what PRs target, and whether the house style is merge or squash.
+Then read the repo's own instructions — `CLAUDE.md`, `AGENTS.md`, and `CONTEXT.md` plus `docs/adr/` where they exist — for the branch work starts from, the branch-name convention, the build command, the test command, the lint command, what PRs target, whether the house style is merge or squash, and the language its issues and PRs are written in.
 
 **Done when you can state each of those and where you got it.** Ask the maintainer for anything the repo doesn't say — a guessed build command burns an agent's whole run before it fails.
 
@@ -74,6 +74,8 @@ One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the 
 > **Run headless.** The maintainer is working on this machine, so anything that opens a window steals their focus. Use the headless form of every tool. Where a check has no headless form, add it to the maintainer's manual list instead of running it — as you do for anything else you cannot validate, with exact steps.
 >
 > **5 — Report.** Push and open a PR against `<target>`, then stop; merging is the maintainer's. Recap: what changed and why in plain terms; each acceptance criterion with its status and evidence; what you could not verify and exactly how to check it; anything that contradicted the issue, or that you are not comfortable with.
+>
+> Commits and the PR go in `<repo language>`. The recap is addressed to the maintainer, so write it in the language they are speaking to you in.
 >
 > Untested means untested. A recap that overstates what was verified costs more than the gap it hides.
 
