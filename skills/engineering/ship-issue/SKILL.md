@@ -21,7 +21,7 @@ gh repo view --json nameWithOwner,defaultBranchRef
 git branch -r
 ```
 
-Then read the repo's own instructions — `CLAUDE.md`, `AGENTS.md`, and `CONTEXT.md` plus `docs/adr/` where they exist — for the branch work starts from, the branch-name convention, the build command, the test command, the lint command, what PRs target, whether the house style is merge or squash, and the language its issues and PRs are written in.
+Then read the repo's own instructions — `CLAUDE.md`, `AGENTS.md`, and `CONTEXT.md` plus `docs/adr/` where they exist — for the branch work starts from, the branch-name convention, the build command, the test command, the lint command, what PRs target, whether the house style is merge or squash, the language its issues and PRs are written in, and — for step 5 — which checkout the maintainer builds from when they test by hand, and how a running build says which commit it came from.
 
 **Done when you can state each of those and where you got it.** Ask the maintainer for anything the repo doesn't say — a guessed build command burns an agent's whole run before it fails.
 
@@ -99,9 +99,21 @@ So relay it before anything else, one block per issue, leading with the two thin
 
 That relay is the deliverable of this whole run. The maintainer should be able to start testing from your message alone, without opening an issue or reading a diff to remember what any of this was for.
 
+### Hand the test list a place to run
+
+The steps were written inside the worktree and carry its assumptions, so open them with the PR head sha, the checkout the maintainer builds from, and the one command that proves what is running is that commit — `git -C <path> log -1 --oneline` where the repo offers nothing better.
+
+Then move nothing. Both checkouts are already spoken for, and moving either is how a maintainer ends up testing code that isn't there. The worktree is the agent's — leave it, and a rework costs nothing. The main clone is the maintainer's, and they are probably working in it right now: say what testing would take and wait for their word. When it comes, `git checkout <sha>` there detaches and passes, where `git checkout <branch>` is refused while the worktree holds it.
+
+**Done when the maintainer can start testing without asking you where anything is.**
+
 Then stop. **Do not review the PRs and do not merge them.** Reviewing is a run of its own, and every repo already has its own path for it — a CI pipeline, an automated reviewer, a human. A pass you add on top lands as a second opinion from the system that wrote the code, on a thread that belongs to someone else. If the maintainer wants one from you, they will ask.
 
 Say once what is still owed, and leave it there: a green CI is not a verification, and the manual list you just relayed is the part no reviewer will cover.
+
+### When it comes back
+
+A failed test sends the issue back to the agent, not to you. Resume the one that wrote it (`SendMessage` in Claude Code) rather than spawning fresh over the same branch — its context is the reason the second attempt is cheaper than the first. Its worktree is where it left it, so there is nothing to restore. What goes stale is the maintainer's checkout, and you are the only one who knows: say so before the agent starts.
 
 Retire the worktree once its PR is merged:
 
