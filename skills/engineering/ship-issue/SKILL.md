@@ -91,7 +91,7 @@ One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the 
 >
 > Untested means untested. A recap that overstates what was verified costs more than the gap it hides.
 
-## 5. Relay, then review
+## 5. Relay, then stop
 
 The reports came back to **you**. A sub-agent's final report is not shown to the human — so right now the run looks finished from where you sit and invisible from where the maintainer sits. Nothing any agent wrote has reached them.
 
@@ -99,7 +99,9 @@ So relay it before anything else, one block per issue, leading with the two thin
 
 That relay is the deliverable of this whole run. The maintainer should be able to start testing from your message alone, without opening an issue or reading a diff to remember what any of this was for.
 
-A green CI is not a verification. Each PR earns a review pass and, where the change is only visible to a human, a manual check — then merges in the repo's house style.
+Then stop. **Do not review the PRs and do not merge them.** Reviewing is a run of its own, and every repo already has its own path for it — a CI pipeline, an automated reviewer, a human. A pass you add on top lands as a second opinion from the system that wrote the code, on a thread that belongs to someone else. If the maintainer wants one from you, they will ask.
+
+Say once what is still owed, and leave it there: a green CI is not a verification, and the manual list you just relayed is the part no reviewer will cover.
 
 Retire the worktree once its PR is merged:
 
