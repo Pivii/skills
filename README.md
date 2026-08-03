@@ -33,7 +33,7 @@ Skills for daily code work.
 
 **Model-invoked**
 
-- **[ship-issue](./skills/engineering/ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report. Everything about the target repo — base branch, branch naming, build, test and lint commands, PR target — is discovered, not assumed. Type it yourself, or tell an agent to use it; either way it states its scope back before it spawns anything.
+- **[ship-issue](./skills/engineering/ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report. Everything about the target repo — base branch, branch naming, build, test and lint commands, PR target — is discovered, not assumed. Type it yourself, or tell an agent to use it; either way it states its scope back before it spawns anything, and ends by handing you the original need plus a numbered list of what still needs testing by hand.
 
 ### Productivity
 

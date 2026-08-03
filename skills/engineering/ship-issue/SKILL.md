@@ -76,13 +76,28 @@ One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the 
 >
 > **Run headless.** The maintainer is working on this machine, so anything that opens a window steals their focus. Use the headless form of every tool. Where a check has no headless form, add it to the maintainer's manual list instead of running it — as you do for anything else you cannot validate, with exact steps.
 >
-> **5 — Report.** Push and open a PR against `<target>`, then stop; merging is the maintainer's. Recap: what changed and why in plain terms; each acceptance criterion with its status and evidence; what you could not verify and exactly how to check it; anything that contradicted the issue, or that you are not comfortable with.
+> **5 — Report.** Push and open a PR against `<target>`, then stop; merging is the maintainer's.
 >
-> Commits and the PR go in `<repo language>`. The recap is addressed to the maintainer, so write it in the language they are speaking to you in.
+> Your recap does not reach the maintainer directly — it returns to the agent that spawned you, to be relayed. Write it to survive that hop, and open it with these two:
+>
+> - **What this was for.** The need, in the maintainer's terms, from the brief — not a summary of your diff. They wrote that issue a while ago and have held ten other things since.
+> - **To test by hand.** Numbered; each line a step and the result to expect. Everything phase 4 left unverified, plus every criterion only a human eye can settle. Followable without reopening the issue. If there is genuinely nothing left, say so and name the commands that covered it — never pad this list to look thorough.
+>
+> Both go in the PR body as well, so they are still there at review time when this conversation is gone.
+>
+> Then the rest: what changed and why; each acceptance criterion with its status and evidence; anything that contradicted the issue, or that you are not comfortable with.
+>
+> Commits and the PR go in `<repo language>`. The recap reaches the maintainer once relayed, so write it in the language they are speaking to you in.
 >
 > Untested means untested. A recap that overstates what was verified costs more than the gap it hides.
 
-## 5. After the report
+## 5. Relay, then review
+
+The reports came back to **you**. A sub-agent's final report is not shown to the human — so right now the run looks finished from where you sit and invisible from where the maintainer sits. Nothing any agent wrote has reached them.
+
+So relay it before anything else, one block per issue, leading with the two things that let a review actually start: **what the issue was for**, and **what to test by hand**. Pass those test steps through as they were written. Compressing them to "a few manual checks remain" throws away the one part the maintainer cannot reconstruct from the diff. Then the PR link, what was verified and how, and anything the agent flagged or was uncomfortable with.
+
+That relay is the deliverable of this whole run. The maintainer should be able to start testing from your message alone, without opening an issue or reading a diff to remember what any of this was for.
 
 A green CI is not a verification. Each PR earns a review pass and, where the change is only visible to a human, a manual check — then merges in the repo's house style.
 
