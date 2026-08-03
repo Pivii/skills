@@ -1,6 +1,6 @@
 {
   "name": "pivi-skills",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Agent skills for shipping real software — worktree-isolated agent runs, and more to come.",
   "author": {
     "name": "Pierre Viviere",
