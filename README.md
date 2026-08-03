@@ -25,15 +25,15 @@ This writes the skills into your repo as ordinary files you own and can edit. No
 
 ## Reference
 
-Skills split on one axis — **who can invoke them**. **User-invoked** skills are reachable only when you type them (e.g. `/some-skill`); their job is to orchestrate. **Model-invoked** skills can be invoked by you *or* reached for automatically by the agent when the task fits; they hold the reusable discipline. See [.agents/invocation.md](./.agents/invocation.md).
+Skills split on one axis — **who can invoke them**. **User-invoked** skills are reachable only when you type them (e.g. `/some-skill`) — that lock is for skills whose cost is already spent by the time you notice they fired. **Model-invoked** skills you can type, hand to a sub-agent, or let the agent reach for when the task fits. See [.agents/invocation.md](./.agents/invocation.md).
 
 ### Engineering
 
 Skills for daily code work.
 
-**User-invoked**
+**Model-invoked**
 
-- **[ship-issue](./skills/engineering/ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report. Everything about the target repo — base branch, branch naming, build, test and lint commands, PR target — is discovered, not assumed.
+- **[ship-issue](./skills/engineering/ship-issue/SKILL.md)** — Run an agent on a tracker issue in its own git worktree, through five phases: context, plan, implement, verify, report. Everything about the target repo — base branch, branch naming, build, test and lint commands, PR target — is discovered, not assumed. Type it yourself, or tell an agent to use it; either way it states its scope back before it spawns anything.
 
 ### Productivity
 

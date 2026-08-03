@@ -1,7 +1,6 @@
 ---
 name: ship-issue
-description: Run an agent on a tracker issue in its own git worktree, through five phases — context, plan, implement, verify, report.
-disable-model-invocation: true
+description: Run an agent on a tracker issue in its own git worktree, through five phases — context, plan, implement, verify, report. Use when someone hands you issue numbers to build — "ship issue 285", "lance le dev sur #271", "take 255 252 241 in parallel" — or asks for tracker issues to be implemented in isolated worktrees. This one writes code, pushes branches and opens PRs; for reading, triaging or estimating an issue, don't reach for it.
 ---
 
 # Ship an issue
@@ -54,6 +53,10 @@ Agents collide on **shared files**, not on their own code. Before spawning, read
 **Done when every cleared issue has a worktree, and no two issues spawning together share a file.**
 
 ## 4. Spawn
+
+The run reaches you two ways — the maintainer types it, or an agent they're talking to is told to use it. Both are fine. What isn't fine is spawning on numbers nobody confirmed: the branches, the commits and the PRs all land under the maintainer's name, and that is the step you cannot take back.
+
+So say it back first — the issues cleared, the ones dropped and why, which ones run together, and the base and target branches you found. Then spawn. If the numbers reached you inferred rather than stated, stop there and wait for the maintainer's word.
 
 One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the working directory, the commands from step 1 substituted in. Parallel where step 3 allowed it. Hand it the phases whole — their never varying is the point:
 
