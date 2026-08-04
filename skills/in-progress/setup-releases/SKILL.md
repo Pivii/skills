@@ -78,7 +78,7 @@ Some of those write code. Run the repo's own build and lint over what you added,
 - `docs/RELEASING.md`, in the format of [CONTRACT.md](./CONTRACT.md).
 - Where good release material already exists, the contract carries the block and **links** to it. Two copies of a rule become two different rules.
 - A pointer in `CLAUDE.md` / `AGENTS.md`. This is what makes the contract reachable by any agent working in the repo, not only by a release run — and it is most of what stops releases from varying.
-- Retire what the contract supersedes. An absorbed project-local skill left in place is a second, drifting answer.
+- **Delete** what the contract absorbed — a project-local release skill, a runbook whose rules now live in the contract. Deleted, not hollowed out into a launcher: a launcher is a third name for the same thing, maintained once per repo, and it drifts. The entry points are the pointer in `CLAUDE.md` and `/ship-release`, which is the same command in every repo. Material the contract only **links** to stays exactly where it is.
 - **Verify the block against the repo**: every declared branch resolves, every version home exists. A contract written six months ago on a repo that has moved fails loudly rather than sending a release down a branch that is gone.
 
 **Done when `docs/RELEASING.md` exists, its every declaration resolves, the pointer is in place, and superseded material is gone.**
