@@ -42,12 +42,14 @@ Classify the repo first — site, business app, mobile app, desktop tool, librar
 
 ## 3. Put the draft to the maintainer
 
+The maintainer has not read the contract and has no reason to know what one is. So every question opens by saying **what their answer becomes** — the section it lands in, and what goes wrong when it is missing. Asked bare, these four read as a checklist of chores being handed back, and get answered with a shrug.
+
 Four things the repo cannot tell you, and they are the reason this skill talks to a human at all:
 
 - **What counts as validation here** — who checks what before it reaches users, and on which environment. A release run will later ask for this to be *declared*, so the contract has to say what a truthful answer looks like.
 - **The version-meaning table** — present it filled and ask for corrections. Ask whether `v1.4.0` was really a MINOR; never ask what MINOR should mean.
 - **Rollback** — the procedure, and whether it has ever actually been run. An untested rollback is an intention, and an incident is a bad place to find that out.
-- **The scars** — what has bitten someone here that no reading of the repo reveals. A build-time variable a redeploy will not pick up. A forge call that needs a REST fallback. A closing keyword the forge ignores in this language. These never survive in anyone's head, and they are what makes a contract worth more than a template.
+- **The scars** — what has already gone wrong here, written down so it stops costing anything. Nobody recognises their own scars under that name, so never ask openly: you will have found candidates in the deployment docs, the commit history and any local release skill, so **put them up as a list to confirm and extend**, each one in the maintainer's own terms — *"a `NEXT_PUBLIC_*` variable set at runtime stays inert: is that right, and what else has caught you out?"* Say in the same breath that you are recording these, not offering to fix them, or the list reads as work being handed back.
 
 Everything else you found goes past them as a summary to correct. Every question carries your proposed answer; the maintainer's job is to correct it, not to compose it — a setup that interrogates is a setup nobody runs twice.
 
