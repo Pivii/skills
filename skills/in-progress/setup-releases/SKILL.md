@@ -44,6 +44,8 @@ Classify the repo first — site, business app, mobile app, desktop tool, librar
 
 The maintainer has not read the contract and has no reason to know what one is. So every question opens by saying **what their answer becomes** — the section it lands in, and what goes wrong when it is missing. Asked bare, these four read as a checklist of chores being handed back, and get answered with a shrug.
 
+**Contract**, **transition**, **home**, **baseline**, **scar** are words for you. Met cold, they are jargon, and a person who cannot tell what category of thing is being asked about answers nothing at all. Name each in the maintainer's own terms the first time — a scar is *something that went wrong on a past release and cost you an afternoon*. Introduce the subject before the question, in one sentence, every time.
+
 Four things the repo cannot tell you, and they are the reason this skill talks to a human at all:
 
 - **What counts as validation here** — who checks what before it reaches users, and on which environment. A release run will later ask for this to be *declared*, so the contract has to say what a truthful answer looks like.
