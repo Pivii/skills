@@ -14,8 +14,8 @@ version:
   tags: "v*"             # the tag pattern of THIS project's line
   baseline: forge-releases   # forge-releases | tag-pattern | none
   derivation: reliable       # reliable | indicative
-  homes:                     # every file the number lives in; [] if the tag is its only home
-    - { file: package.json, field: version }
+  homes:                     # where the number lives; [] if the tag is its only home
+    - { command: "npm version {version} --no-git-tag-version --allow-same-version" }
     - { file: src-tauri/tauri.conf.json, field: version }
 
 transitions:
@@ -24,13 +24,18 @@ transitions:
     to: main
     bump: derived          # derived | patch | minor | major | none
     steps: [version, pr, ci, merge, tag, release, verify, issues]
-    verify: "GET https://example.com/api/health → .version equals the tag"
+    verify: "GET https://example.com/api/version → .version equals the tag"
     backmerge: null        # branch the change must return to, or null
+    exercised: always      # always | never — never means nobody has run this path
 ```
 
 **`baseline`** is where "the last release" is read from. `forge-releases` on any fork — `git tag` there returns the upstream's tags, and a diff computed from one of those describes work nobody in this repo did.
 
 **`derivation`** records how far a version bump can be trusted from commit messages: `reliable` at a high conventional-commit rate, `indicative` when a large share cannot be classified. The prose carries the measured rate. A repo that never writes `!` or `BREAKING CHANGE` cannot derive a MAJOR at all — say so, so nobody waits for one.
+
+**`homes`** takes a `command` wherever the ecosystem owns the number. `npm version` writes `package.json` and the two sites inside `package-lock.json` together; a file-and-field pair addresses one of the three and silently leaves the rest behind. Reach for `file`/`field` only where nothing owns the number — a plist key, a constant in the source. `{version}` is substituted.
+
+**`exercised: never`** marks a path written at a desk that nobody has run. A release taking it is doing so for the first time, and should be told before it starts rather than after it breaks.
 
 ### The step vocabulary
 

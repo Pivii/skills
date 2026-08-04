@@ -63,9 +63,11 @@ Propose each one, apply the confirmed ones:
 - `0.y.z` on something a third party already depends on — `0.x` announces *unstable, build nothing on this*. Where that is not what the repo means, the next release is `1.0.0`.
 - Upstream tags mixed into a fork's line — settle the pattern that belongs to this project and record it.
 
+Some of those write code. Run the repo's own build and lint over what you added, and read the warnings rather than the exit code — a version endpoint that compiles with a deprecation notice is a correction that will need doing twice.
+
 **A version that already shipped never gets a tag or a release now.** Reconstructed from old merge commits, it is the one claim nobody can check and everybody will believe. Where a repo has no tags, the line opens at the first release and the contract says what came before is untraced.
 
-**Done when every proposal is applied or declined, and no shipped version has been tagged after the fact.**
+**Done when every proposal is applied or declined, every code correction builds and lints clean, and no shipped version has been tagged after the fact.**
 
 ## 5. Write it and wire it
 
