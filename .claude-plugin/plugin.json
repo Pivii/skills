@@ -9,5 +9,5 @@
   "repository": "https://github.com/Pivii/skills",
   "license": "MIT",
   "keywords": ["engineering", "skills", "worktree", "agents"],
-  "skills": ["./skills/engineering/ship-issue"]
+  "skills": ["./skills/engineering/ship-issue", "./skills/engineering/ios-build"]
 }
