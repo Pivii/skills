@@ -67,9 +67,9 @@ xcrun devicectl device process launch --device <udid> <bundle-id>
 
 `-allowProvisioningDeviceRegistration` registers a phone the team does not know yet, and that is the cheapest moment to do it: a phone registered now is a phone the over-the-air route will accept later.
 
-A launch refused with the device **locked** is not a failed install — the app is on the phone; say so and let them open it.
+A launch refused with `BSErrorCodeDescription = Locked` is not a failed install — the app is on the phone, and it opens once they unlock it.
 
-**Done when** the app is installed and launched, and you have reported `<app> <branch> @ <sha> installed and launched on <phone name>`.
+**Done when** the install succeeded and you have reported `<app> <branch> @ <sha> installed on <phone name>`, followed by `launched` or `not launched: phone locked`.
 
 ## 4. Over the air
 
