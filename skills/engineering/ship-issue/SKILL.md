@@ -9,6 +9,8 @@ description: Run an agent on a tracker issue in its own git worktree, through fi
 
 `/ship-issue 255 252 241` — an agent and a worktree each.
 
+`/ship-issue 271 avec captures et vidéo` — the same, with proof attached; see [Proof, on request](#proof-on-request).
+
 You pass issue numbers. Everything else is discovered.
 
 ## 1. Read the ground
@@ -56,7 +58,7 @@ Agents collide on **shared files**, not on their own code. Before spawning, read
 
 The run reaches you two ways — the maintainer types it, or an agent they're talking to is told to use it. Both are fine. What isn't fine is spawning on numbers nobody confirmed: the branches, the commits and the PRs all land under the maintainer's name, and that is the step you cannot take back.
 
-So say it back first — the issues cleared, the ones dropped and why, which ones run together, and the base and target branches you found. Then spawn. If the numbers reached you inferred rather than stated, stop there and wait for the maintainer's word.
+So say it back first — the issues cleared, the ones dropped and why, which ones run together, the base and target branches you found, and any proof asked for. Then spawn. If the numbers reached you inferred rather than stated, stop there and wait for the maintainer's word.
 
 One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the working directory, the commands from step 1 substituted in. Parallel where step 3 allowed it. Hand it the phases whole — their never varying is the point:
 
@@ -91,11 +93,35 @@ One sub-agent per issue (`general-purpose` in Claude Code), its worktree as the 
 >
 > Untested means untested. A recap that overstates what was verified costs more than the gap it hides.
 
+### Proof, on request
+
+Off by default: a run with no word about media is exactly the run above. The maintainer turns each medium on at launch, in their own words — "avec captures", "avec vidéo", "with screenshots and video"; "sans captures" keeps it off. Screenshots and video are separate switches, and one never implies the other. They cover every issue in the run unless the wording ties them to one.
+
+When either is on, append this block to the prompt, keeping only the media asked for and the section for the project's kind:
+
+> **Proof — <screenshots | video | screenshots and video>.** The maintainer will validate this PR on proof instead of retesting it, so capture what phase 4 exercised: screenshots of every screen the change touches — and the same screens built from `<base>` when the difference is the point — and a video of the tested path, start to finish. Write the files outside the worktree (`proof=$(mktemp -d)`) so none is swept into a commit. If the repo's instructions define a proof workflow of their own — CI artifacts, a media folder — follow it and link what it produces.
+>
+> *iOS.* Capture on a simulator of your own: the one already booted may be the maintainer's. `xcrun simctl create`, then `xcrun simctl boot <udid>` — booting through `simctl` opens no window; opening Simulator.app does. Install and launch with `xcrun simctl install` / `launch`, and drive the path with the repo's UI tests or `xcrun simctl openurl`. Screenshot with `xcrun simctl io <udid> screenshot <file>.png`. For video, start `xcrun simctl io <udid> recordVideo --codec=h264 <file>.mp4` in the background, wait for `Recording started` on its stderr, run the path, then stop it with `kill -INT` — the file is only finalized on SIGINT. `xcrun simctl delete <udid>` when done.
+>
+> *Web.* Serve the site the way the repo says, and capture with a headless browser — Playwright's default. `npx playwright screenshot --full-page <url> <file>.png` per page; for video, a short Playwright script with `recordVideo` on the browser context, which writes a `.webm` when the context closes. When the site deploys on Vercel, add the branch preview once the PR is open: Vercel records it as a GitHub deployment on the head commit — `gh api "repos/<owner/repo>/deployments?sha=<head sha>"`, then that deployment's `statuses_url` for `environment_url`.
+>
+> GitHub has no API to upload into a PR body, so publish the files on a branch of their own that is never merged — one orphan commit, which touches neither your branch nor your worktree:
+>
+> ```bash
+> tree=$(for f in "$proof"/*; do printf '100644 blob %s\t%s\n' "$(git hash-object -w "$f")" "${f##*/}"; done | git mktree)
+> sha=$(git commit-tree "$tree" -m "proof for #N")
+> git push -f origin "$sha:refs/heads/proof/N"
+> ```
+>
+> Link each file as `https://github.com/<owner/repo>/blob/<sha>/<file>?raw=true` — screenshots inline as `![…](…)`, the video as a link. If the push is refused, give the local paths instead and say why.
+>
+> In phase 5, the recap and the PR body both carry a **Proof** section: every proof asked for, linked, plus the Vercel preview where there is one. A proof asked for and not produced is named there with the reason it could not be — a silent gap reads as a pass.
+
 ## 5. Relay, then stop
 
 The reports came back to **you**. A sub-agent's final report is not shown to the human — so right now the run looks finished from where you sit and invisible from where the maintainer sits. Nothing any agent wrote has reached them.
 
-So relay it before anything else, one block per issue, leading with the two things that let a review actually start: **what the issue was for**, and **what to test by hand**. Pass those test steps through as they were written. Compressing them to "a few manual checks remain" throws away the one part the maintainer cannot reconstruct from the diff. Then the PR link, what was verified and how, and anything the agent flagged or was uncomfortable with.
+So relay it before anything else, one block per issue, leading with the two things that let a review actually start: **what the issue was for**, and **what to test by hand**. Pass those test steps through as they were written. Compressing them to "a few manual checks remain" throws away the one part the maintainer cannot reconstruct from the diff. Then the PR link; the Proof section when one was asked for, its links and its gaps passed through as written; what was verified and how, and anything the agent flagged or was uncomfortable with.
 
 That relay is the deliverable of this whole run. The maintainer should be able to start testing from your message alone, without opening an issue or reading a diff to remember what any of this was for.
 
@@ -115,8 +141,9 @@ Say once what is still owed, and leave it there: a green CI is not a verificatio
 
 A failed test sends the issue back to the agent, not to you. Resume the one that wrote it (`SendMessage` in Claude Code) rather than spawning fresh over the same branch — its context is the reason the second attempt is cheaper than the first. Its worktree is where it left it, so there is nothing to restore. What goes stale is the maintainer's checkout, and you are the only one who knows: say so before the agent starts.
 
-Retire the worktree once its PR is merged:
+Retire the worktree once its PR is merged, and its proof branch if it has one — every clone fetches it otherwise. The PR's proof links die with it; they were for the review, and the review is over.
 
 ```bash
 git worktree remove <worktrees>/<N>
+git push origin --delete proof/<N>
 ```
