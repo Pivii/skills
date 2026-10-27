@@ -108,12 +108,12 @@ When either is on, append this block to the prompt, keeping only the media asked
 > GitHub has no API to upload into a PR body, so publish the files on a branch of their own that is never merged — one orphan commit, which touches neither your branch nor your worktree:
 >
 > ```bash
-> tree=$(for f in "$proof"/*; do printf '100644 blob %s\t%s\n' "$(git hash-object -w "$f")" "${f##*/}"; done | git mktree)
+> tree=$(for f in "$proof"/*; do printf '100644 blob %s\t%s\n' "$(git hash-object -w --no-filters "$f")" "${f##*/}"; done | git mktree)
 > sha=$(git commit-tree "$tree" -m "proof for #N")
-> git push -f origin "$sha:refs/heads/proof/N"
+> git push -f origin "${sha}:refs/heads/proof/N"   # braces: zsh reads "$sha:r…" as a modifier
 > ```
 >
-> Link each file as `https://github.com/<owner/repo>/blob/<sha>/<file>?raw=true` — screenshots inline as `![…](…)`, the video as a link. If the push is refused, give the local paths instead and say why.
+> Link each file as `https://github.com/<owner/repo>/blob/<sha>/<file>?raw=true` — screenshots inline as `![…](…)`, the video as a link. On a private repo these resolve only for a logged-in reader; an anonymous 404 is not a broken link. If the push is refused, give the local paths instead and say why.
 >
 > In phase 5, the recap and the PR body both carry a **Proof** section: every proof asked for, linked, plus the Vercel preview where there is one. A proof asked for and not produced is named there with the reason it could not be — a silent gap reads as a pass.
 
