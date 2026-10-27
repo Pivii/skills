@@ -115,7 +115,7 @@ When either is on, append this block to the prompt, keeping only the media asked
 >
 > Link each file as `https://github.com/<owner/repo>/blob/<sha>/<file>?raw=true` — screenshots inline as `![…](…)`, the video as a link. On a private repo these resolve only for a logged-in reader; an anonymous 404 is not a broken link. If the push is refused, give the local paths instead and say why.
 >
-> In phase 5, the recap and the PR body both carry a **Proof** section: every proof asked for, linked, plus the Vercel preview where there is one. A proof asked for and not produced is named there with the reason it could not be — a silent gap reads as a pass.
+> In phase 5, the recap and the PR body both carry a **Proof** section: every proof asked for, linked, plus the Vercel preview — or "no Vercel preview: none recorded" when the deployments come back empty. A proof asked for and not produced is named there with the reason it could not be — a silent gap reads as a pass. That includes a change with no screen or path to show: the medium is *not applicable*, with why. Capturing an unrelated page in its place fakes the proof; a command transcript may back the claim up, never stand in for it.
 
 ## 5. Relay, then stop
 
