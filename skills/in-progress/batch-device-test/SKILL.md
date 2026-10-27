@@ -33,9 +33,9 @@ gh pr view <n> --json reviews,comments,mergeStateStatus
 A PR joins the batch when all of these hold:
 
 - **it targets the batch's branch;**
-- **it merges cleanly into the target** — `mergeStateStatus` is not `DIRTY`;
-- **it is not back on the head that was sent back.** A PR returned after a KO rejoins a batch only with a new head;
-- **its checks are green on its current head.** Pending checks get one wait for all of them, run in the background with a deadline — 20 minutes absent a figure in the repo's docs, since `gh pr checks` exits 8 while pending: `sh -c 'end=$(($(date +%s)+1200)); for n in 13 14; do while gh pr checks $n >/dev/null; [ $? -eq 8 ] && [ $(date +%s) -lt $end ]; do sleep 30; done; done'`. Still pending, the PR is out: *checks pending*;
+- **it merges cleanly into the target** — `mergeStateStatus` reads `CLEAN`, or another known state that is not `DIRTY`. `UNKNOWN` is GitHub still computing: ask again until it settles; still `UNKNOWN` after a few tries, the PR is out: *merge state unknown*;
+- **it is not back on the head that was sent back.** A PR returned after a KO rejoins a batch only with a new head — compare `headRefOid` with the `#<n>@<sha>` the KO names;
+- **its checks are green on its current head.** Pending checks get one wait for all of them, run in the background with a deadline — 20 minutes absent a figure in the repo's docs, since `gh pr checks` exits 8 while pending: `sh -c 'end=$(($(date +%s)+1200)); for n in 13 14; do while gh pr checks $n >/dev/null; [ $? -eq 8 ] && [ $(date +%s) -lt $end ]; do sleep 30; done; done'`. Still pending, the PR is out: *checks pending*. After the wait, read each PR's head and merge state again;
 - **its review finished without a blocking point** — the repo's reviewer, or, when the repo has none, your own read of the diff, said as such in the announcement;
 - **it changes something the device can show.** Docs, CI or tooling alone have nothing to test on a phone: *nothing device-visible*.
 
@@ -43,7 +43,7 @@ A PR joins the batch when all of these hold:
 
 Keep it to 2–5 PRs, about 15 minutes of testing. A filter that leaves one PR says so and offers the choice: a solo build through the same steps, or stop.
 
-**Announce** the batch: each PR with its head sha, each PR dropped or held back with its reason, overlaps accepted, the target branch, the device, and what the repo's docs left open — merge style, reviewer, install command. Every open choice, stop conditions included, goes in this one message, with its options. Then wait for the human's word whenever the batch differs from the numbers they typed, or they typed none.
+**Announce** the batch: each PR with its head sha, each PR dropped or held back with its reason, overlaps accepted, the target branch, the device, and what the repo's docs left open — reviewer, install command, and the merge style, inferred from `git log origin/<target>` and confirmed here. Every open choice, stop conditions included, goes in this one message, with its options. Then wait for the human's word whenever the batch differs from the numbers they typed, or they typed none.
 
 **Done when** each PR is in the batch with its head sha, or out with a reason, and the human confirmed any batch that is not exactly what they typed.
 
@@ -55,10 +55,14 @@ The test branch is `test/batch-<numbers>`, built in its own worktree beside the 
 
 ```bash
 MAIN=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")   # the main clone, even from a worktree
-WT="$MAIN/../$(basename "$MAIN")-wt/test-batch-136-137-138"
+WT="$(dirname "$MAIN")/$(basename "$MAIN")-wt/test-batch-136-137-138"
 git fetch origin <target>
-git worktree add --no-track -b test/batch-136-137-138 "$WT" origin/<target>
+if git rev-parse -q --verify refs/heads/test/batch-136-137-138 >/dev/null || [ -e "$WT" ]; then
+  echo "left from an earlier run: test/batch-136-137-138 or $WT"; false
+else git worktree add --no-track -b test/batch-136-137-138 "$WT" origin/<target>; fi
 ```
+
+A branch or worktree of that name left from an earlier run stops the build: report it, and leave it as it is.
 
 Merge each PR's head by its sha from step 1, in a POSIX shell so the loop reads the same whatever the user's shell is. The pairs are written out literally — built from variables, brace them, `"${n}:${sha}"`, since zsh reads `$n:h` as a modifier:
 
@@ -86,7 +90,7 @@ A moved head sends that PR back to step 1. **A conflict stops the build**: recor
 
 Keep the app's data — an install over the existing app — unless a test needs a clean install.
 
-**Set the device up for the test**: the human's language — the checklist's first step when only the app can set it — the models or data the tests need already in place, nothing left from earlier tests. Then **release it**: whatever drove the device for an agent — a device-control server, a UI test runner, a mirroring session — is stopped before the human picks it up. The repo's docs name its own tools.
+**Set the device up for the test**, once no other run holds it: the human's language — the checklist's first step when only the app can set it — the models or data the tests need already in place, nothing left from earlier tests. Then **release it**: whatever drove the device for an agent — a device-control server, a UI test runner, a mirroring session — is stopped before the human picks it up. The repo's docs name its own tools.
 
 **Done when** you can report the target sha, each merged head sha, the test tree's sha, and the identifier the device shows for the installed build — one unique to this build, such as the commit stamped in an about screen or a build number. A marketing version repeated across builds proves nothing; when the app shows nothing unique, say so and report what the install command printed.
 
@@ -111,10 +115,10 @@ Expected: <one sentence>
 
 Not testable on this device: <what, and why>
 
-Reply one line per PR:
-#136 OK              tested, hold the merge
-#136 OK, merge       tested, merge it
-#137 KO: <what happened>
+Reply one line per PR — OK (tested, hold the merge), OK, merge (tested, merge it), or KO:
+#136 OK, merge
+#137 OK
+#138 KO: <what happened>
 ```
 
 The lead passes the checklist to the human **as written**. A summary of it loses the steps the human needs.
@@ -136,7 +140,7 @@ gh pr view <next> --json mergeStateStatus # UNKNOWN just after a merge: ask agai
 **Each KO** is settled in this order:
 
 1. **Suspect the combination** when the KO lands on a screen another PR in the batch also changes, or on an overlap the human accepted. Then the dev builds the suspect PR **alone** — `test/batch-<n>`, steps 2 and 3, over the existing app's data — and the human tests that. The batch branch stays until the solo result is in.
-2. **Then send it back** with the human's words **verbatim**, the expected result, the proof the human asked for, and the solo result when there is one: KO alone is the PR's own bug; OK alone means the combination, and both PRs go back. A dev agent that wrote the PR is resumed rather than replaced. With no agent attached, the KO is a PR comment — `gh pr comment <n> --body-file <file>` — read back with `gh pr view <n> --json comments -q '.comments[-1].body'`.
+2. **Then send it back** with the tested head `#<n>@<sha>`, the human's words **verbatim**, the expected result, the proof the human asked for, and the solo result when there is one: KO alone is the PR's own bug; OK alone means the combination, and both PRs go back. A dev agent that wrote the PR is resumed rather than replaced. With no agent attached, the KO is a PR comment — `gh pr comment <n> --body-file <file>` — read back with `gh pr view <n> --json comments -q '.comments[-1].body'`. Refused by your permissions, the human gets that exact command with its body.
 
 The PR returns in a later batch, on a new head.
 
@@ -155,7 +159,7 @@ git ls-remote --heads origin test/batch-136-137-138 <each solo branch>   # empty
 
 The checks name this run's branches. Leftover `test/batch-*` branches from earlier runs are mentioned to the human, not deleted and not waited on. A deletion your permissions refuse goes to the human as the exact command to run; handing it over closes the run.
 
-Put the device back on a build of the target branch when the human uses it day to day — the step 2 install, from a worktree detached on `origin/<target>` and built first when the install command does not build, removed afterwards; check the identifier the device shows against that sha. Leave the test build when they ask for it.
+Put the device back on a build of the target branch when the human uses it day to day — the step 2 install, from a worktree detached on a freshly fetched `origin/<target>` and built first when the install command does not build, removed afterwards; check the identifier the device shows against that sha. Leave the test build when they ask for it.
 
 Delete the test data still on the device: notes, files, recordings, accounts the tests created.
 
